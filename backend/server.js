@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const habitRoutes = require("./routes/habitRoutes");
@@ -10,11 +11,18 @@ const userRoutes = require("./routes/userRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 
+// Make sure the uploads folder exists (it is not in GitHub, so Render
+// starts without it)
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(uploadsDir));
 app.use("/api/auth", authRoutes);
 app.use("/api/habits", habitRoutes);
 app.use("/api/groups", groupRoutes);
